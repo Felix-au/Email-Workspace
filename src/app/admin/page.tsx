@@ -231,7 +231,7 @@ export default function AdminDashboard() {
   const handleUpdateStatus = async (userId: string, newStatus: "APPROVED" | "REJECTED") => {
     try {
       const res = await fetch("/api/admin/users", {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, status: newStatus }),
       });
