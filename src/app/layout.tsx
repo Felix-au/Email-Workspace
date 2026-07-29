@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "metainfosci Email Suite",
-  description: "Secure, private email communications for the metainfosci.com domain.",
+  title: "Domain Email Workspace",
+  description: `Secure, private email communications for the ${process.env.NEXT_PUBLIC_DOMAIN || "custom"} domain.`,
 };
 
 export default function RootLayout({

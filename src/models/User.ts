@@ -55,7 +55,8 @@ export const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
 export async function seedAdmin() {
   try {
-    const adminEmail = "admin@metainfosci.com";
+    const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+    const adminEmail = `admin@${domain}`;
     const existingAdmin = await User.findOne({ email: adminEmail });
 
     if (!existingAdmin) {

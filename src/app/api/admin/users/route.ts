@@ -43,8 +43,8 @@ export async function PATCH(req: Request) {
     if (!targetUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    if (targetUser.email === "admin@metainfosci.com") {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+    if (targetUser.email === `admin@${domain}`) {
       return NextResponse.json({ error: "Cannot modify the primary admin account" }, { status: 400 });
     }
 

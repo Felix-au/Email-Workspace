@@ -613,7 +613,7 @@ export default function AdminDashboard() {
                     onChange={(e) => setNewAliasPrefix(e.target.value)}
                     style={{ flex: 1 }}
                   />
-                  <span style={{ fontSize: "14px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>@metainfosci.com</span>
+                  <span style={{ fontSize: "14px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>@{process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com"}</span>
                   <button type="submit" className={styles.addButton}>
                     <Plus size={16} />
                   </button>

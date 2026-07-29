@@ -24,8 +24,8 @@ export async function POST(req: Request) {
     if (!/^[a-z0-9._-]+$/.test(cleanPrefix)) {
       return NextResponse.json({ error: "Invalid email prefix. Use letters, numbers, dots, hyphens or underscores." }, { status: 400 });
     }
-
-    const fullEmail = `${cleanPrefix}@metainfosci.com`;
+    const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+    const fullEmail = `${cleanPrefix}@${domain}`;
 
     await dbConnect();
 

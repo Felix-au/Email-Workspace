@@ -232,7 +232,7 @@ export default function Home() {
                   onChange={(e) => setEmailPrefix(e.target.value)}
                   disabled={loading}
                 />
-                <span className={styles.emailDomain}>@metainfosci.com</span>
+                <span className={styles.emailDomain}>@{process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com"}</span>
               </div>
             </div>
 

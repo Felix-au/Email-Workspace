@@ -53,8 +53,8 @@ export async function POST(req: Request) {
       if (!/^[a-z0-9._-]+$/.test(cleanPrefix)) {
         return NextResponse.json({ error: "Invalid prefix format" }, { status: 400 });
       }
-
-      const fullAlias = `${cleanPrefix}@metainfosci.com`;
+      const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+      const fullAlias = `${cleanPrefix}@${domain}`;
 
       // Check if alias is already taken by anyone as primary email or alias
       const taken = await User.findOne({
