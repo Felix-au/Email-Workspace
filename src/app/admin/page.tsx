@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { 
+import {
   Mail, Inbox, Send, LogOut, Users, RefreshCw,
   SendHorizontal, X, AlertTriangle, Sun, Moon,
   Settings, Trash2, Plus, Clock
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
         setComposeSubject("");
         setComposeBody("");
         setComposeFooterId("");
-        
+
         await fetchEmails(false);
       }
     } catch (err) {
@@ -482,7 +482,7 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.logoContainer}>
-          <Image src="/logo.png" alt="metainfosci Logo" width={170} height={44} className={styles.sidebarLogo} priority />
+          <Image src="/logo.png" alt="Logo" width={170} height={44} className={styles.sidebarLogo} priority />
         </div>
         <div className={styles.profile}>
           <h2 className={styles.profileName}>{session?.user?.name} (Admin)</h2>
@@ -494,7 +494,7 @@ export default function AdminDashboard() {
         </button>
 
         <nav className={styles.nav}>
-          <div 
+          <div
             className={`${styles.navItem} ${activeTab === "inbox" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("inbox"); setSelectedEmail(null); }}
           >
@@ -504,8 +504,8 @@ export default function AdminDashboard() {
               {emails.filter(e => e.direction === "INBOUND").length}
             </span>
           </div>
-          
-          <div 
+
+          <div
             className={`${styles.navItem} ${activeTab === "sent" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("sent"); setSelectedEmail(null); }}
           >
@@ -516,7 +516,7 @@ export default function AdminDashboard() {
             </span>
           </div>
 
-          <div 
+          <div
             className={`${styles.navItem} ${activeTab === "approvals" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("approvals"); setSelectedEmail(null); }}
           >
@@ -527,7 +527,7 @@ export default function AdminDashboard() {
             </span>
           </div>
 
-          <div 
+          <div
             className={`${styles.navItem} ${activeTab === "accounts" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("accounts"); setSelectedEmail(null); }}
           >
@@ -535,7 +535,7 @@ export default function AdminDashboard() {
             <span>Accounts</span>
           </div>
 
-          <div 
+          <div
             className={`${styles.navItem} ${activeTab === "settings" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("settings"); setSelectedEmail(null); }}
           >
@@ -605,9 +605,9 @@ export default function AdminDashboard() {
               <form onSubmit={handleAddAlias} className={styles.addForm}>
                 <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Register Custom Suffix Alias</h4>
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <input 
-                    type="text" 
-                    className={styles.addInput} 
+                  <input
+                    type="text"
+                    className={styles.addInput}
                     placeholder="support"
                     value={newAliasPrefix}
                     onChange={(e) => setNewAliasPrefix(e.target.value)}
@@ -644,16 +644,16 @@ export default function AdminDashboard() {
 
               <form onSubmit={handleSaveFooter} className={styles.addForm}>
                 <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Create New Footer Signature</h4>
-                <input 
-                  type="text" 
-                  className={styles.addInput} 
+                <input
+                  type="text"
+                  className={styles.addInput}
                   placeholder="e.g. Work Signature"
                   value={newFooterName}
                   onChange={(e) => setNewFooterName(e.target.value)}
                   required
                 />
-                <textarea 
-                  className={styles.addTextarea} 
+                <textarea
+                  className={styles.addTextarea}
                   placeholder="Regards,&#10;Felix&#10;Support Representative"
                   value={newFooterContent}
                   onChange={(e) => setNewFooterContent(e.target.value)}
@@ -668,17 +668,17 @@ export default function AdminDashboard() {
               <h2 className={styles.settingsSectionTitle}>Security</h2>
               <form onSubmit={handleChangePassword} className={styles.addForm}>
                 <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Change Account Password</h4>
-                <input 
-                  type="password" 
-                  className={styles.addInput} 
+                <input
+                  type="password"
+                  className={styles.addInput}
                   placeholder="Current Password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
                 />
-                <input 
-                  type="password" 
-                  className={styles.addInput} 
+                <input
+                  type="password"
+                  className={styles.addInput}
                   placeholder="New Password (min 6 characters)"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -778,18 +778,17 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td>
-                        <span className={`${styles.statusBadge} ${
-                          u.status === "APPROVED" ? styles.statusApproved :
-                          u.status === "REJECTED" ? styles.statusRejected :
-                          styles.statusPending
-                        }`}>
+                        <span className={`${styles.statusBadge} ${u.status === "APPROVED" ? styles.statusApproved :
+                            u.status === "REJECTED" ? styles.statusRejected :
+                              styles.statusPending
+                          }`}>
                           {u.status}
                         </span>
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                           {/* Reset Password Form */}
-                          <form 
+                          <form
                             onSubmit={(e) => {
                               e.preventDefault();
                               const form = e.target as HTMLFormElement;
@@ -801,13 +800,13 @@ export default function AdminDashboard() {
                             }}
                             style={{ display: "flex", gap: "6px" }}
                           >
-                            <input 
-                              type="password" 
-                              name="newPassword" 
-                              placeholder="New password" 
-                              className={styles.addInput} 
+                            <input
+                              type="password"
+                              name="newPassword"
+                              placeholder="New password"
+                              className={styles.addInput}
                               style={{ width: "120px", padding: "4px 8px", fontSize: "12px", marginTop: 0 }}
-                              required 
+                              required
                             />
                             <button type="submit" className={styles.addButton} style={{ padding: "4px 8px", fontSize: "12px" }}>
                               Reset
@@ -815,8 +814,8 @@ export default function AdminDashboard() {
                           </form>
 
                           {u.role !== "ADMIN" && (
-                            <button 
-                              onClick={() => handleDeleteUser(u._id, u.username)} 
+                            <button
+                              onClick={() => handleDeleteUser(u._id, u.username)}
                               className={styles.rejectBtn}
                               style={{ padding: "4px 8px", fontSize: "12px" }}
                             >
@@ -839,9 +838,9 @@ export default function AdminDashboard() {
             <div className={styles.paneHeader}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h1 className={styles.paneTitle}>{activeTab === "inbox" ? "Inbox" : "Sent"}</h1>
-                <button 
-                  onClick={() => fetchEmails(false)} 
-                  disabled={refreshing} 
+                <button
+                  onClick={() => fetchEmails(false)}
+                  disabled={refreshing}
                   style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
                 >
                   <RefreshCw size={14} className={refreshing ? "spin" : ""} />
@@ -860,7 +859,7 @@ export default function AdminDashboard() {
                 </div>
               ) : (
                 filteredEmails.map((email) => (
-                  <div 
+                  <div
                     key={email._id}
                     className={`${styles.mailCard} ${selectedEmail?._id === email._id ? styles.mailCardActive : ""}`}
                     onClick={() => setSelectedEmail(email)}
@@ -896,8 +895,8 @@ export default function AdminDashboard() {
                 </div>
                 <div className={styles.detailScroll}>
                   {selectedEmail.htmlBody ? (
-                    <div 
-                      className={styles.emailBody} 
+                    <div
+                      className={styles.emailBody}
                       dangerouslySetInnerHTML={{ __html: selectedEmail.htmlBody }}
                     />
                   ) : (
@@ -936,7 +935,7 @@ export default function AdminDashboard() {
             <form onSubmit={handleSendEmail} className={styles.modalForm}>
               <div className={styles.modalRow}>
                 <span className={styles.modalRowLabel}>From</span>
-                <select 
+                <select
                   className={styles.modalRowSelect}
                   value={composeFrom}
                   onChange={(e) => setComposeFrom(e.target.value)}
@@ -951,9 +950,9 @@ export default function AdminDashboard() {
 
               <div className={styles.modalRow}>
                 <span className={styles.modalRowLabel}>To</span>
-                <input 
-                  type="email" 
-                  className={styles.modalRowInput} 
+                <input
+                  type="email"
+                  className={styles.modalRowInput}
                   placeholder="recipient@example.com"
                   value={composeTo}
                   onChange={(e) => setComposeTo(e.target.value)}
@@ -964,9 +963,9 @@ export default function AdminDashboard() {
 
               <div className={styles.modalRow}>
                 <span className={styles.modalRowLabel}>Subject</span>
-                <input 
-                  type="text" 
-                  className={styles.modalRowInput} 
+                <input
+                  type="text"
+                  className={styles.modalRowInput}
                   placeholder="Topic of discussion"
                   value={composeSubject}
                   onChange={(e) => setComposeSubject(e.target.value)}
@@ -977,7 +976,7 @@ export default function AdminDashboard() {
               {footers.length > 0 && (
                 <div className={styles.modalRow}>
                   <span className={styles.modalRowLabel}>Footer</span>
-                  <select 
+                  <select
                     className={styles.modalRowSelect}
                     value={composeFooterId}
                     onChange={(e) => setComposeFooterId(e.target.value)}
@@ -991,7 +990,7 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              <textarea 
+              <textarea
                 className={styles.textarea}
                 placeholder="Write your email here..."
                 value={composeBody}

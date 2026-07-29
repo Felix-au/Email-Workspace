@@ -144,7 +144,7 @@ export default function Home() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logoContainer}>
-            <Image src="/logo.png" alt="metainfosci Logo" width={180} height={48} className={styles.brandLogo} priority />
+            <Image src="/logo.png" alt="Logo" width={180} height={48} className={styles.brandLogo} priority />
           </div>
           <p className={styles.subtitle}>
             {isLogin

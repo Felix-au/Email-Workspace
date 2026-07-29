@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { 
-  Mail, Inbox, Send, LogOut, Clock, 
+import {
+  Mail, Inbox, Send, LogOut, Clock,
   SendHorizontal, X, AlertTriangle, RefreshCw, Sun, Moon,
   Settings, Trash2, Plus
 } from "lucide-react";
@@ -99,7 +99,7 @@ export default function UserDashboard() {
       if (res.ok) {
         const data = await res.json();
         setEmails(data);
-        
+
         // Reset selected email if it's no longer in the list
         if (selectedEmail) {
           const stillExists = data.some((e: EmailType) => e._id === selectedEmail._id);
@@ -195,7 +195,7 @@ export default function UserDashboard() {
         setComposeSubject("");
         setComposeBody("");
         setComposeFooterId("");
-        
+
         // Refresh inbox
         await fetchEmails(false);
       }
@@ -422,7 +422,7 @@ export default function UserDashboard() {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.logoContainer}>
-          <Image src="/logo.png" alt="metainfosci Logo" width={170} height={44} className={styles.sidebarLogo} priority />
+          <Image src="/logo.png" alt="Logo" width={170} height={44} className={styles.sidebarLogo} priority />
         </div>
         <div className={styles.profile}>
           <h2 className={styles.profileName}>{session?.user?.name}</h2>
@@ -434,7 +434,7 @@ export default function UserDashboard() {
         </button>
 
         <nav className={styles.nav}>
-          <div 
+          <div
             className={`${styles.navItem} ${activeTab === "inbox" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("inbox"); setSelectedEmail(null); }}
           >
@@ -444,8 +444,8 @@ export default function UserDashboard() {
               {emails.filter(e => e.direction === "INBOUND").length}
             </span>
           </div>
-          
-          <div 
+
+          <div
             className={`${styles.navItem} ${activeTab === "sent" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("sent"); setSelectedEmail(null); }}
           >
@@ -456,7 +456,7 @@ export default function UserDashboard() {
             </span>
           </div>
 
-          <div 
+          <div
             className={`${styles.navItem} ${activeTab === "settings" ? styles.navItemActive : ""}`}
             onClick={() => { setActiveTab("settings"); setSelectedEmail(null); }}
           >
@@ -526,9 +526,9 @@ export default function UserDashboard() {
               <form onSubmit={handleAddAlias} className={styles.addForm}>
                 <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Register Custom Suffix Alias</h4>
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <input 
-                    type="text" 
-                    className={styles.addInput} 
+                  <input
+                    type="text"
+                    className={styles.addInput}
                     placeholder="support"
                     value={newAliasPrefix}
                     onChange={(e) => setNewAliasPrefix(e.target.value)}
@@ -565,16 +565,16 @@ export default function UserDashboard() {
 
               <form onSubmit={handleSaveFooter} className={styles.addForm}>
                 <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Create New Footer Signature</h4>
-                <input 
-                  type="text" 
-                  className={styles.addInput} 
+                <input
+                  type="text"
+                  className={styles.addInput}
                   placeholder="e.g. Work Signature"
                   value={newFooterName}
                   onChange={(e) => setNewFooterName(e.target.value)}
                   required
                 />
-                <textarea 
-                  className={styles.addTextarea} 
+                <textarea
+                  className={styles.addTextarea}
                   placeholder="Regards,&#10;Felix&#10;Support Representative"
                   value={newFooterContent}
                   onChange={(e) => setNewFooterContent(e.target.value)}
@@ -589,17 +589,17 @@ export default function UserDashboard() {
               <h2 className={styles.settingsSectionTitle}>Security</h2>
               <form onSubmit={handleChangePassword} className={styles.addForm}>
                 <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Change Account Password</h4>
-                <input 
-                  type="password" 
-                  className={styles.addInput} 
+                <input
+                  type="password"
+                  className={styles.addInput}
                   placeholder="Current Password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
                 />
-                <input 
-                  type="password" 
-                  className={styles.addInput} 
+                <input
+                  type="password"
+                  className={styles.addInput}
                   placeholder="New Password (min 6 characters)"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -619,9 +619,9 @@ export default function UserDashboard() {
             <div className={styles.paneHeader}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h1 className={styles.paneTitle}>{activeTab === "inbox" ? "Inbox" : "Sent"}</h1>
-                <button 
-                  onClick={() => fetchEmails(false)} 
-                  disabled={refreshing} 
+                <button
+                  onClick={() => fetchEmails(false)}
+                  disabled={refreshing}
                   style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer" }}
                 >
                   <RefreshCw size={14} className={refreshing ? "spin" : ""} />
@@ -640,7 +640,7 @@ export default function UserDashboard() {
                 </div>
               ) : (
                 filteredEmails.map((email) => (
-                  <div 
+                  <div
                     key={email._id}
                     className={`${styles.mailCard} ${selectedEmail?._id === email._id ? styles.mailCardActive : ""}`}
                     onClick={() => setSelectedEmail(email)}
@@ -676,8 +676,8 @@ export default function UserDashboard() {
                 </div>
                 <div className={styles.detailScroll}>
                   {selectedEmail.htmlBody ? (
-                    <div 
-                      className={styles.emailBody} 
+                    <div
+                      className={styles.emailBody}
                       dangerouslySetInnerHTML={{ __html: selectedEmail.htmlBody }}
                     />
                   ) : (
@@ -716,7 +716,7 @@ export default function UserDashboard() {
             <form onSubmit={handleSendEmail} className={styles.modalForm}>
               <div className={styles.modalRow}>
                 <span className={styles.modalRowLabel}>From</span>
-                <select 
+                <select
                   className={styles.modalRowSelect}
                   value={composeFrom}
                   onChange={(e) => setComposeFrom(e.target.value)}
@@ -731,9 +731,9 @@ export default function UserDashboard() {
 
               <div className={styles.modalRow}>
                 <span className={styles.modalRowLabel}>To</span>
-                <input 
-                  type="email" 
-                  className={styles.modalRowInput} 
+                <input
+                  type="email"
+                  className={styles.modalRowInput}
                   placeholder="recipient@example.com"
                   value={composeTo}
                   onChange={(e) => setComposeTo(e.target.value)}
@@ -744,9 +744,9 @@ export default function UserDashboard() {
 
               <div className={styles.modalRow}>
                 <span className={styles.modalRowLabel}>Subject</span>
-                <input 
-                  type="text" 
-                  className={styles.modalRowInput} 
+                <input
+                  type="text"
+                  className={styles.modalRowInput}
                   placeholder="Topic of discussion"
                   value={composeSubject}
                   onChange={(e) => setComposeSubject(e.target.value)}
@@ -757,7 +757,7 @@ export default function UserDashboard() {
               {footers.length > 0 && (
                 <div className={styles.modalRow}>
                   <span className={styles.modalRowLabel}>Footer</span>
-                  <select 
+                  <select
                     className={styles.modalRowSelect}
                     value={composeFooterId}
                     onChange={(e) => setComposeFooterId(e.target.value)}
@@ -771,7 +771,7 @@ export default function UserDashboard() {
                 </div>
               )}
 
-              <textarea 
+              <textarea
                 className={styles.textarea}
                 placeholder="Write your email here..."
                 value={composeBody}
