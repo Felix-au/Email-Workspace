@@ -63,6 +63,13 @@ export default function UserDashboard() {
 
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
+  const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+  const isMetainfosci = domain === "metainfosci.com";
+  const logoSrc = isMetainfosci
+    ? "/metainfosci.png"
+    : (theme === "dark" ? "/Email-Workspace-Dark.png" : "/Email-Workspace-light.png");
+  const shouldInvert = isMetainfosci && theme === "dark";
+
   // Initialize theme from document element
   useEffect(() => {
     const isLight = document.documentElement.classList.contains('light-theme');
@@ -422,7 +429,14 @@ export default function UserDashboard() {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.logoContainer}>
-          <Image src="/logo.png" alt="Logo" width={170} height={44} className={styles.sidebarLogo} priority />
+          <Image 
+            src={logoSrc} 
+            alt="Logo" 
+            width={170} 
+            height={44} 
+            className={`${styles.sidebarLogo} ${shouldInvert ? styles.invertLogo : ""}`} 
+            priority 
+          />
         </div>
         <div className={styles.profile}>
           <h2 className={styles.profileName}>{session?.user?.name}</h2>

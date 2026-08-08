@@ -21,6 +21,13 @@ export default function Home() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
+  const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+  const isMetainfosci = domain === "metainfosci.com";
+  const logoSrc = isMetainfosci
+    ? "/metainfosci.png"
+    : (theme === "dark" ? "/Email-Workspace-Dark.png" : "/Email-Workspace-light.png");
+  const shouldInvert = isMetainfosci && theme === "dark";
+
   // Initialize theme from document element
   useEffect(() => {
     const isLight = document.documentElement.classList.contains('light-theme');
@@ -144,7 +151,14 @@ export default function Home() {
       <div className={styles.card}>
         <div className={styles.header}>
           <div className={styles.logoContainer}>
-            <Image src="/logo.png" alt="Logo" width={180} height={48} className={styles.brandLogo} priority />
+            <Image 
+              src={logoSrc} 
+              alt="Logo" 
+              width={180} 
+              height={48} 
+              className={`${styles.brandLogo} ${shouldInvert ? styles.invertLogo : ""}`} 
+              priority 
+            />
           </div>
           <p className={styles.subtitle}>
             {isLogin

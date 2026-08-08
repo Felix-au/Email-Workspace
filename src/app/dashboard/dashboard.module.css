@@ -29,7 +29,7 @@
   margin-left: -16px;
 }
 
-:global(.dark-theme) .sidebarLogo {
+.invertLogo {
   filter: invert(1) brightness(1.5);
 }
 
