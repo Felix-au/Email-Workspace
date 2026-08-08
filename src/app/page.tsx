@@ -43,6 +43,11 @@ export default function Home() {
     localStorage.setItem('theme', nextTheme);
     document.documentElement.classList.remove('dark-theme', 'light-theme');
     document.documentElement.classList.add(nextTheme + '-theme');
+
+    const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+    if (link && !isMetainfosci) {
+      link.href = nextTheme === "dark" ? "/Email-Workspace-Dark.png" : "/Email-Workspace-light.png";
+    }
   };
 
   // Redirect users if already logged in

@@ -13,9 +13,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+const isMetainfosci = domain === "metainfosci.com";
+const initialIcon = isMetainfosci ? "/metainfosci-icon.png" : "/Email-Workspace-Dark.png";
+
 export const metadata: Metadata = {
   title: "Domain Email Workspace",
-  description: `Secure, private email communications for the ${process.env.NEXT_PUBLIC_DOMAIN || "custom"} domain.`,
+  description: `Secure, private email communications for the ${domain} domain.`,
+  icons: {
+    icon: initialIcon,
+  },
 };
 
 export default function RootLayout({
@@ -32,6 +39,20 @@ export default function RootLayout({
               (function() {
                 const theme = localStorage.getItem('theme') || 'dark';
                 document.documentElement.classList.add(theme + '-theme');
+                
+                const domain = "${domain}";
+                const isMetainfosci = domain === "metainfosci.com";
+                const faviconHref = isMetainfosci 
+                  ? "/metainfosci-icon.png" 
+                  : (theme === "dark" ? "/Email-Workspace-Dark.png" : "/Email-Workspace-light.png");
+                
+                let link = document.querySelector("link[rel~='icon']");
+                if (!link) {
+                  link = document.createElement('link');
+                  link.rel = 'icon';
+                  document.getElementsByTagName('head')[0].appendChild(link);
+                }
+                link.href = faviconHref;
               })();
             `,
           }}
