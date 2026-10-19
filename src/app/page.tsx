@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, CheckCircle, Sun, Moon } from "lucide-react";
+import { AlertCircle, CheckCircle, Sun, Moon, KeyRound } from "lucide-react";
 import Image from "next/image";
 import styles from "./page.module.css";
 
@@ -17,6 +17,7 @@ export default function Home() {
   const [emailPrefix, setEmailPrefix] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [resettingAdmin, setResettingAdmin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -99,6 +100,34 @@ export default function Home() {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResetAdminPassword = async () => {
+    setResettingAdmin(true);
+    setError(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch("/api/auth/reset-admin-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to reset admin password.");
+      } else {
+        setSuccessMsg(data.message || "Admin password has been reset to default (admin123).");
+        setUsername("admin");
+        setPassword("");
+      }
+    } catch (err) {
+      console.error("Reset admin password error:", err);
+      setError("An error occurred while resetting admin password.");
+    } finally {
+      setResettingAdmin(false);
     }
   };
 
@@ -218,8 +247,24 @@ export default function Home() {
               </div>
             </div>
 
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
+            <button type="submit" className={styles.submitBtn} disabled={loading || resettingAdmin}>
               {loading ? <div className={styles.spinner}></div> : "Sign In"}
+            </button>
+
+            <button
+              type="button"
+              className={styles.resetAdminBtn}
+              onClick={handleResetAdminPassword}
+              disabled={loading || resettingAdmin}
+            >
+              {resettingAdmin ? (
+                <div className={styles.spinner}></div>
+              ) : (
+                <>
+                  <KeyRound size={15} />
+                  <span>Reset Admin Password</span>
+                </>
+              )}
             </button>
           </form>
         ) : (
