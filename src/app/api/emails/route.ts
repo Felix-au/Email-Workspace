@@ -44,10 +44,6 @@ export async function GET() {
         ? [user.email.toLowerCase(), ...(user.aliases || []).map((a: string) => a.toLowerCase())] 
         : [userEmail.toLowerCase()];
 
-      const domain = (process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com").toLowerCase();
-      const hasWildcard = (session.user.role === "ADMIN" || user?.role === "ADMIN") && 
-        allUserEmails.some((a: string) => a === "*" || a === `*@${domain}`);
-
       // List received emails from the Resend Receiving API
       const resendList = await resend.emails.receiving.list();
       
@@ -60,11 +56,8 @@ export async function GET() {
             const toEmail = extractEmail(rawTo);
             if (!toEmail) continue;
 
-            // Synchronize if recipient matches user's addresses OR if admin has wildcard and recipient is under domain
-            const matchesRecipient = allUserEmails.includes(toEmail) || 
-              (hasWildcard && (toEmail.endsWith(`@${domain}`) || toEmail.includes(`@${domain}`)));
-
-            if (matchesRecipient) {
+            // ONLY synchronize emails where the recipient matches one of the user's addresses
+            if (allUserEmails.includes(toEmail)) {
               // Check if this received email is already saved locally for this specific recipient
               const exists = await Email.findOne({ resendId: item.id, to: toEmail });
               if (!exists) {
@@ -104,29 +97,13 @@ export async function GET() {
     ? [user.email.toLowerCase(), ...(user.aliases || []).map((a: string) => a.toLowerCase())] 
     : [userEmail.toLowerCase()];
 
-  const domain = (process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com").toLowerCase();
-  const hasWildcard = (session.user.role === "ADMIN" || user?.role === "ADMIN") && 
-    allUserEmails.some((a: string) => a === "*" || a === `*@${domain}`);
-
-  // Retrieve emails where user or any of their aliases is either sender or recipient,
-  // or any email belonging to the domain if the admin has a wildcard catch-all alias
-  const query = hasWildcard
-    ? {
-        $or: [
-          { from: { $in: allUserEmails } },
-          { to: { $in: allUserEmails } },
-          { to: { $regex: `@${domain}$`, $options: "i" } },
-          { from: { $regex: `@${domain}$`, $options: "i" } },
-        ],
-      }
-    : {
-        $or: [
-          { from: { $in: allUserEmails } },
-          { to: { $in: allUserEmails } },
-        ],
-      };
-
-  const emails = await Email.find(query).sort({ timestamp: -1 });
+  // Retrieve emails where user or any of their aliases is either sender or recipient
+  const emails = await Email.find({
+    $or: [
+      { from: { $in: allUserEmails } },
+      { to: { $in: allUserEmails } },
+    ],
+  }).sort({ timestamp: -1 });
 
   return NextResponse.json(emails);
 }
@@ -156,18 +133,9 @@ export async function POST(req: Request) {
       ? [user.email.toLowerCase(), ...(user.aliases || []).map((a: string) => a.toLowerCase())] 
       : [primaryFromEmail.toLowerCase()];
 
-    const domain = (process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com").toLowerCase();
-    const hasWildcard = (session.user.role === "ADMIN" || user?.role === "ADMIN") && 
-      allowedEmails.some((a: string) => a === "*" || a === `*@${domain}`);
-
     const senderAddress = from ? from.toLowerCase().trim() : primaryFromEmail.toLowerCase();
 
-    // Check permission: if user has wildcard catch-all, allow sending from any address on domain
-    if (hasWildcard) {
-      if (!senderAddress.endsWith(`@${domain}`)) {
-        return NextResponse.json({ error: `Sender address must belong to @${domain}` }, { status: 400 });
-      }
-    } else if (!allowedEmails.includes(senderAddress)) {
+    if (!allowedEmails.includes(senderAddress)) {
       return NextResponse.json({ error: "Unauthorized sender address alias" }, { status: 403 });
     }
 

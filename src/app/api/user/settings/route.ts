@@ -50,21 +50,11 @@ export async function POST(req: Request) {
       }
 
       const cleanPrefix = aliasPrefix.toLowerCase().trim();
-      const isAdmin = session.user.role === "ADMIN";
-
-      if (cleanPrefix === "*") {
-        if (!isAdmin) {
-          return NextResponse.json(
-            { error: "Only administrators can configure a wildcard catch-all alias (*)" },
-            { status: 403 }
-          );
-        }
-      } else if (!/^[a-z0-9._-]+$/.test(cleanPrefix)) {
+      if (!/^[a-z0-9._-]+$/.test(cleanPrefix)) {
         return NextResponse.json({ error: "Invalid prefix format" }, { status: 400 });
       }
-
-      const domain = (process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com").toLowerCase();
-      const fullAlias = cleanPrefix === "*" ? `*@${domain}` : `${cleanPrefix}@${domain}`;
+      const domain = process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com";
+      const fullAlias = `${cleanPrefix}@${domain}`;
 
       // Check if alias is already taken by anyone as primary email or alias
       const taken = await User.findOne({
@@ -75,7 +65,7 @@ export async function POST(req: Request) {
       });
 
       if (taken) {
-        return NextResponse.json({ error: "Email address or alias is already in use by another user" }, { status: 400 });
+        return NextResponse.json({ error: "Email address is already in use by another user" }, { status: 400 });
       }
 
       await User.updateOne(
@@ -83,12 +73,7 @@ export async function POST(req: Request) {
         { $addToSet: { aliases: fullAlias } }
       );
 
-      return NextResponse.json({ 
-        success: true, 
-        message: cleanPrefix === "*" 
-          ? `Wildcard catch-all alias ${fullAlias} added successfully` 
-          : `Alias ${fullAlias} added successfully` 
-      });
+      return NextResponse.json({ success: true, message: `Alias ${fullAlias} added successfully` });
     }
 
     if (action === "remove_alias") {

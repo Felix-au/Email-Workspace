@@ -52,7 +52,6 @@ export default function AdminDashboard() {
   // Compose Modal States
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [composeFrom, setComposeFrom] = useState("");
-  const [customFromPrefix, setCustomFromPrefix] = useState("");
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
@@ -179,7 +178,6 @@ export default function AdminDashboard() {
     if (session?.user?.email) {
       const timer = setTimeout(() => {
         setComposeFrom(session.user.email as string);
-        setCustomFromPrefix("");
       }, 0);
       return () => clearTimeout(timer);
     }
@@ -190,20 +188,6 @@ export default function AdminDashboard() {
     if (!composeTo) {
       setSendError("Recipient is required.");
       return;
-    }
-
-    let sender = composeFrom;
-    if (composeFrom === "__CUSTOM__") {
-      const cleanPrefix = customFromPrefix.trim().toLowerCase();
-      if (!cleanPrefix) {
-        setSendError("Please specify a custom sender prefix.");
-        return;
-      }
-      if (!/^[a-z0-9._-]+$/.test(cleanPrefix)) {
-        setSendError("Invalid custom sender prefix. Use letters, numbers, dots, hyphens or underscores.");
-        return;
-      }
-      sender = `${cleanPrefix}@${domain}`;
     }
 
     setSending(true);
@@ -227,7 +211,7 @@ export default function AdminDashboard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: sender,
+          from: composeFrom,
           to: composeTo,
           subject: composeSubject,
           textBody,
@@ -245,7 +229,6 @@ export default function AdminDashboard() {
         setComposeSubject("");
         setComposeBody("");
         setComposeFooterId("");
-        setCustomFromPrefix("");
 
         await fetchEmails(false);
       }
@@ -625,77 +608,32 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {aliases.map((alias) => {
-                  const isWildcard = alias === "*" || alias === `*@${domain}`;
-                  return (
-                    <div key={alias} className={styles.settingsItem}>
-                      <div className={styles.settingsItemText}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <span className={styles.settingsItemLabel}>
-                            {isWildcard ? "Wildcard / Catch-All Alias" : "Alias Address"}
-                          </span>
-                          {isWildcard && (
-                            <span style={{
-                              fontSize: "10px",
-                              padding: "2px 8px",
-                              borderRadius: "12px",
-                              background: "rgba(56, 189, 248, 0.15)",
-                              color: "#38bdf8",
-                              fontWeight: 600,
-                              letterSpacing: "0.5px"
-                            }}>
-                              ⭐ Active Catch-All
-                            </span>
-                          )}
-                        </div>
-                        <span className={styles.settingsItemVal}>{alias}</span>
-                        {isWildcard && (
-                          <span style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
-                            Receives all inbound emails on @{domain} and permits sending as any address
-                          </span>
-                        )}
-                      </div>
-                      <button className={styles.deleteAction} onClick={() => handleRemoveAlias(alias)}>
-                        <Trash2 size={16} />
-                      </button>
+                {aliases.map((alias) => (
+                  <div key={alias} className={styles.settingsItem}>
+                    <div className={styles.settingsItemText}>
+                      <span className={styles.settingsItemLabel}>Alias Address</span>
+                      <span className={styles.settingsItemVal}>{alias}</span>
                     </div>
-                  );
-                })}
+                    <button className={styles.deleteAction} onClick={() => handleRemoveAlias(alias)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
               </div>
 
               <form onSubmit={handleAddAlias} className={styles.addForm}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                  <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Register Custom Suffix Alias</h4>
-                  {!aliases.some(a => a === "*" || a === `*@${domain}`) && (
-                    <button
-                      type="button"
-                      onClick={() => setNewAliasPrefix("*")}
-                      style={{
-                        fontSize: "12px",
-                        background: "rgba(56, 189, 248, 0.1)",
-                        border: "1px dashed #38bdf8",
-                        color: "#38bdf8",
-                        padding: "3px 8px",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        fontWeight: 500,
-                      }}
-                    >
-                      + Quick Add Wildcard (*)
-                    </button>
-                  )}
-                </div>
+                <h4 style={{ fontSize: "13px", fontWeight: "600" }}>Register Custom Suffix Alias</h4>
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   <input
                     type="text"
                     className={styles.addInput}
-                    placeholder="support or * for wildcard catch-all"
+                    placeholder="support"
                     value={newAliasPrefix}
                     onChange={(e) => setNewAliasPrefix(e.target.value)}
                     style={{ flex: 1 }}
                   />
-                  <span style={{ fontSize: "14px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>@{domain}</span>
-                  <button type="submit" className={styles.addButton} title="Add Alias">
+                  <span style={{ fontSize: "14px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>@{process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com"}</span>
+                  <button type="submit" className={styles.addButton}>
                     <Plus size={16} />
                   </button>
                 </div>
@@ -1014,47 +952,19 @@ export default function AdminDashboard() {
             )}
 
             <form onSubmit={handleSendEmail} className={styles.modalForm}>
-              <div className={styles.modalRow} style={{ alignItems: "flex-start" }}>
-                <span className={styles.modalRowLabel} style={{ paddingTop: "8px" }}>From</span>
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <select
-                    className={styles.modalRowSelect}
-                    value={composeFrom}
-                    onChange={(e) => setComposeFrom(e.target.value)}
-                    disabled={sending}
-                  >
-                    <option value={session?.user?.email || ""}>{session?.user?.email} (Primary)</option>
-                    {aliases.map((alias) => (
-                      <option key={alias} value={alias}>
-                        {alias === `*@${domain}` || alias === "*" 
-                          ? `${alias} (Catch-All Wildcard)` 
-                          : alias}
-                      </option>
-                    ))}
-                    {aliases.some(a => a === "*" || a === `*@${domain}`) && (
-                      <option value="__CUSTOM__">⚡ Custom Sender Address (Wildcard)...</option>
-                    )}
-                  </select>
-
-                  {composeFrom === "__CUSTOM__" && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <input
-                        type="text"
-                        className={styles.modalRowInput}
-                        placeholder="e.g. billing, alerts, ceo"
-                        value={customFromPrefix}
-                        onChange={(e) => setCustomFromPrefix(e.target.value)}
-                        disabled={sending}
-                        autoFocus
-                        required
-                        style={{ flex: 1 }}
-                      />
-                      <span style={{ fontSize: "14px", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
-                        @{domain}
-                      </span>
-                    </div>
-                  )}
-                </div>
+              <div className={styles.modalRow}>
+                <span className={styles.modalRowLabel}>From</span>
+                <select
+                  className={styles.modalRowSelect}
+                  value={composeFrom}
+                  onChange={(e) => setComposeFrom(e.target.value)}
+                  disabled={sending}
+                >
+                  <option value={session?.user?.email || ""}>{session?.user?.email} (Primary)</option>
+                  {aliases.map((alias) => (
+                    <option key={alias} value={alias}>{alias}</option>
+                  ))}
+                </select>
               </div>
 
               <div className={styles.modalRow}>

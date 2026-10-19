@@ -153,7 +153,6 @@ Use this registry checklist to locate and study the core modules and routes of t
 | `[ ]` | **[src/app/api/emails/route.ts](./src/app/api/emails/route.ts)** | Main backend engine for sending messages and demand-driven inbox syncing via Resend. |
 | `[ ]` | **[src/app/api/auth/[...nextauth]/route.ts](./src/app/api/auth/[...nextauth]/route.ts)** | Credentials authentication configurations, encryption checkers, and user session resolvers. |
 | `[ ]` | **[src/app/api/auth/register/route.ts](./src/app/api/auth/register/route.ts)** | Registration validations, domain suffix generators, and database insertions. |
-| `[ ]` | **[src/app/api/auth/reset-admin-password/route.ts](./src/app/api/auth/reset-admin-password/route.ts)** | Rescue endpoint to reset the administrator password to the seed default (`admin123`). |
 | `[ ]` | **[src/app/api/user/settings/route.ts](./src/app/api/user/settings/route.ts)** | User parameters modification handler (alias bindings, template signature editor, password updates). |
 | `[ ]` | **[src/app/api/admin/users/route.ts](./src/app/api/admin/users/route.ts)** | Admin operations mapping user collection listings and registration approval flags. |
 | `[ ]` | **[src/app/api/admin/users/[id]/route.ts](./src/app/api/admin/users/[id]/route.ts)** | Admin endpoints supporting force password overrides and account cascading deletions. |

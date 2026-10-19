@@ -47,49 +47,28 @@ export async function POST(req: Request) {
 
     const recipients = Array.isArray(toRawList) ? toRawList : [toRawList || ""];
 
-    // For each recipient, check if they exist in our registered users or match wildcard admin
-    const domain = (process.env.NEXT_PUBLIC_DOMAIN || "yourdomain.com").toLowerCase();
-
+    // For each recipient, check if they exist in our registered users
     for (const rawTo of recipients) {
       const toEmail = extractEmail(rawTo);
       if (!toEmail) continue;
 
-      // Verify user exists in database (either via primary email or registered alias)
-      const userExists = await User.findOne({
-        $or: [
-          { email: toEmail },
-          { aliases: toEmail },
-        ],
-      });
-
-      // Check if any admin has a wildcard catch-all alias active for domain emails
-      const isDomainEmail = toEmail.endsWith(`@${domain}`);
-      const wildcardAdmin = (!userExists && isDomainEmail)
-        ? await User.findOne({
-            role: "ADMIN",
-            aliases: { $in: ["*", `*@${domain}`] },
-          })
-        : null;
-
-      if (userExists || wildcardAdmin) {
-        // Prevent duplicate record if already inserted
-        const existingRecord = await Email.findOne({ resendId: email_id, to: toEmail });
-        if (!existingRecord) {
-          const newEmail = await Email.create({
-            resendId: email_id,
-            from: fromEmail,
-            to: toEmail,
-            subject: subject || "(No Subject)",
-            textBody,
-            htmlBody,
-            direction: "INBOUND",
-            timestamp: new Date(),
-          });
-          storedEmails.push(newEmail);
-          console.log(`Stored inbound email for ${toEmail} from ${fromEmail} (Wildcard: ${!userExists && !!wildcardAdmin})`);
-        }
+      // Verify user exists in database
+      const userExists = await User.findOne({ email: toEmail });
+      if (userExists) {
+        // Create inbound email record for this recipient
+        const newEmail = await Email.create({
+          from: fromEmail,
+          to: toEmail,
+          subject: subject || "(No Subject)",
+          textBody,
+          htmlBody,
+          direction: "INBOUND",
+          timestamp: new Date(),
+        });
+        storedEmails.push(newEmail);
+        console.log(`Stored inbound email for ${toEmail} from ${fromEmail}`);
       } else {
-        console.log(`Recipient ${toEmail} is not registered and no catch-all admin active. Email ignored.`);
+        console.log(`Recipient ${toEmail} is not registered or approved. Email ignored.`);
       }
     }
 
